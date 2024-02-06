@@ -1,22 +1,22 @@
 {
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "GitHub.copilot",
-                "CrappyCodeMaker.ccm-plsql-oracle",
-                "DavidAnson.vscode-markdownlint",
-                "EwanDubashinski.plsqllint",
-                "Oracle.oracledevtools",
-                "Oracle.sql-developer",
-                "adpyke.vscode-sql-formatter",
-                "apng.orclapex-autocomplete",
-                "casian.plsql",
-                "markdownlint.markdownlint",
-                "mycelo.oracle-plsql",
-                "streetsidesoftware.code-spell-checker",
-                "vsls-contrib.gitdoc",
-                "xyz.plsql-language"
-            ]
-        }
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "CrappyCodeMaker.ccm-plsql-oracle",
+        "DavidAnson.vscode-markdownlint",
+        "EwanDubashinski.plsqllint",
+        "Oracle.oracledevtools",
+        "Oracle.sql-developer",
+        "adpyke.vscode-sql-formatter",
+        "apng.orclapex-autocomplete",
+        "casian.plsql",
+        "markdownlint.markdownlint",
+        "mycelo.oracle-plsql",
+        "streetsidesoftware.code-spell-checker",
+        "vsls-contrib.gitdoc",
+        "xyz.plsql-language"
+      ]
     }
+  }
 }
