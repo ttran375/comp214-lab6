@@ -1,0 +1,21 @@
+{
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.indentSize": 4,
+    "editor.insertSpaces": true,
+    "editor.rulers": [
+        80,
+        120
+    ],
+    "editor.tabSize": 4,
+    "files.insertFinalNewline": true,
+    "git.autofetch": true,
+    "gitdoc.autoCommitDelay": 60000,
+    "gitdoc.commitMessageFormat": "ccc, LLL d, y, h:mm a '+00:00'",
+    "gitdoc.commitOnClose": true,
+    "gitdoc.enabled": true,
+    "oracledevtools.formatterSettings": {
+        "identifierCasing": "No change",
+        "keywordCasing": "Uppercase"
+    }
+}
