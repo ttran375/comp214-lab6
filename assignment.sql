@@ -57,6 +57,33 @@ END;
 -- 2. Run the block. Notice the subquery in the SELECT statement. Also, because an UPDATE is
 -- performed, the FOR UPDATE and WHERE CURRENT OF clauses are used.
 -- 3. Run a query, as shown in Figure 4-34, to check the results.
+DECLARE
+    v_shopper_id   BB_SHOPPER.ID%TYPE;
+    v_total_spent  NUMBER;
+BEGIN
+    FOR shopper_rec IN (
+        SELECT id, SUM(total_purchase) AS total_spent
+        FROM BB_SHOPPER_PURCHASE
+        GROUP BY id
+    ) LOOP
+        v_shopper_id := shopper_rec.id;
+        v_total_spent := shopper_rec.total_spent;
+
+        IF v_total_spent > 100 THEN
+            UPDATE BB_SHOPPER
+            SET PROMO = 'Free shipping coupon'
+            WHERE ID = v_shopper_id;
+        ELSIF v_total_spent > 50 THEN
+            UPDATE BB_SHOPPER
+            SET PROMO = '$5 coupon for next purchase over $25'
+            WHERE ID = v_shopper_id;
+        END IF;
+    END LOOP;
+    
+    COMMIT;
+END;
+/
+
 
 -- Assignment 4-3: Using Implicit Cursors
 -- The BB_SHOPPER table in the Brewbean’s database contains a column named PROMO that
