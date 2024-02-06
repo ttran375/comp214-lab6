@@ -1,3 +1,0 @@
-*.sql linguist-detectable=true
-*.txt linguist-detectable=false
-*.sql linguist-language=PLSQL
