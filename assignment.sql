@@ -11,35 +11,28 @@
 -- A variable named lv_flag_txt is used to store the status of the stock check. The results
 -- should look like Figure 4-33.
 DECLARE
-  CURSOR basket_items_cur IS
-  SELECT
-    bi.idBasketItem,
-    bi.idProduct,
-    bi.Quantity,
-    p.stock
-  FROM
-    bb_basketitem bi
-    JOIN bb_product p
-    ON bi.idProduct = p.idProduct
-  WHERE
-    bi.idBasket = :basket_number;
-  basket_item_rec basket_items_cur%ROWTYPE;
-  lv_flag_txt     VARCHAR2(100) := 'All items in stock!';
+   CURSOR cur_basket IS
+     SELECT bi.idBasket, bi.quantity, p.stock
+       FROM bb_basketitem bi INNER JOIN bb_product p
+         USING (idProduct)
+       WHERE bi.idBasket = 6;
+   TYPE type_basket IS RECORD (
+     basket bb_basketitem.idBasket%TYPE,
+     qty bb_basketitem.quantity%TYPE,
+     stock bb_product.stock%TYPE);
+   rec_basket type_basket;
+   lv_flag_txt CHAR(1) := 'Y';
 BEGIN
-  OPEN basket_items_cur;
-  LOOP
-    FETCH basket_items_cur INTO basket_item_rec;
-    EXIT WHEN basket_items_cur%NOTFOUND;
-    IF basket_item_rec.Quantity > basket_item_rec.stock THEN
-      lv_flag_txt := 'All items NOT in stock!';
-      EXIT;
-    END IF;
-  END LOOP;
-
-  CLOSE basket_items_cur;
-  DBMS_OUTPUT.PUT_LINE(lv_flag_txt);
+   OPEN cur_basket;
+   LOOP 
+     FETCH cur_basket INTO rec_basket;
+      EXIT WHEN cur_basket%NOTFOUND;
+      IF rec_basket.stock < rec_basket.qty THEN lv_flag_txt := 'N'; END IF;
+   END LOOP;
+   CLOSE cur_basket;
+   IF lv_flag_txt = 'Y' THEN DBMS_OUTPUT.PUT_LINE('All items in stock!'); END IF;
+   IF lv_flag_txt = 'N' THEN DBMS_OUTPUT.PUT_LINE('All items NOT in stock!'); END IF;   
 END;
-/
 
 -- Assignment 4-2: Using a CURSOR FOR Loop
 -- Brewbean’s wants to send a promotion via e-mail to shoppers. A shopper who has purchased
@@ -55,6 +48,33 @@ END;
 -- 2. Run the block. Notice the subquery in the SELECT statement. Also, because an UPDATE is
 -- performed, the FOR UPDATE and WHERE CURRENT OF clauses are used.
 -- 3. Run a query, as shown in Figure 4-34, to check the results.
+DECLARE
+   CURSOR cur_shopper IS
+     SELECT a.idShopper, a.promo,  b.total                          
+       FROM bb_shopper a, (SELECT b.idShopper, SUM(bi.quantity*bi.price) total
+                            FROM bb_basketitem bi, bb_basket b
+                            WHERE bi.idBasket = b.idBasket
+                            GROUP BY idShopper) b
+        WHERE a.idShopper = b.idShopper
+     FOR UPDATE OF a.idShopper NOWAIT;
+   lv_promo_txt CHAR(1);
+BEGIN
+  FOR rec_shopper IN cur_shopper LOOP
+   lv_promo_txt := 'X';
+   IF rec_shopper.total > 100 THEN 
+          lv_promo_txt := 'A';
+   END IF;
+   IF rec_shopper.total BETWEEN 50 AND 99 THEN 
+          lv_promo_txt := 'B';
+   END IF;   
+   IF lv_promo_txt <> 'X' THEN
+     UPDATE bb_shopper
+      SET promo = lv_promo_txt
+      WHERE CURRENT OF cur_shopper;
+   END IF;
+  END LOOP;
+  COMMIT;
+END;
 
 -- Assignment 4-3: Using Implicit Cursors
 -- The BB_SHOPPER table in the Brewbean’s database contains a column named PROMO that
