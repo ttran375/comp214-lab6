@@ -118,7 +118,6 @@ END;
 -- and displays “No tax” onscreen.
 -- 4. Run the block again. Your results should look like Figure 4-36. Now the error is handled in
 -- the block’s EXCEPTION section.
--- FIGURE 4-35 Raising an error with a CASE statement
 DECLARE
    CURSOR cur_basket IS
      SELECT bi.idBasket, bi.quantity, p.stock
