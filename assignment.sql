@@ -76,6 +76,14 @@ BEGIN
   COMMIT;
 END;
 
+-- FIGURE 4-34 Querying the BB_SHOPPER table to check the PROMO column
+SELECT 
+idShopper, 
+s.promo, 
+SUM(bi.quantity*bi.price) total 
+FROM 
+bb_shoppers 
+INNER JOIN bb_basket b USING (idShopper) INNER JOIN bb_basketitem bi USING (idBasket) GROUP BY idShopper, s.promo ORDER BY idShopper:
 -- Assignment 4-3: Using Implicit Cursors
 -- The BB_SHOPPER table in the Brewbean’s database contains a column named PROMO that
 -- specifies promotions to send to shoppers. This column needs to be cleared after the promotion
