@@ -90,7 +90,21 @@ SELECT idShopper, s.promo, SUM(bi.quantity*bi.price) total
 -- editor (such as Notepad). Run the UPDATE and COMMIT statements at the top of this file (not
 -- the anonymous block at the end). Modify the anonymous block so that it displays the number of
 -- rows updated onscreen. Run the block.
--- FIGURE 4-34 Querying the BB_SHOPPER table to check the PROMO column
+UPDATE bb_shopper
+  SET promo = NULL;
+UPDATE bb_shopper
+  SET promo = 'B'
+  WHERE idShopper IN (21,23,25);
+UPDATE bb_shopper
+  SET promo = 'A'
+  WHERE idShopper = 22;
+COMMIT;
+
+BEGIN
+ UPDATE bb_shopper
+  SET promo = NULL
+  WHERE promo IS NOT NULL;
+END;
 
 -- Assignment 4-4: Using Exception Handling
 -- In this assignment, you test a block containing a CASE statement for errors, and then add an
@@ -105,6 +119,44 @@ SELECT idShopper, s.promo, SUM(bi.quantity*bi.price) total
 -- 4. Run the block again. Your results should look like Figure 4-36. Now the error is handled in
 -- the block’s EXCEPTION section.
 -- FIGURE 4-35 Raising an error with a CASE statement
+DECLARE
+   CURSOR cur_basket IS
+     SELECT bi.idBasket, bi.quantity, p.stock
+       FROM bb_basketitem bi INNER JOIN bb_product p
+         USING (idProduct)
+       WHERE bi.idBasket = 6;
+   TYPE type_basket IS RECORD (
+     basket bb_basketitem.idBasket%TYPE,
+     qty bb_basketitem.quantity%TYPE,
+     stock bb_product.stock%TYPE);
+   rec_basket type_basket;
+   lv_flag_txt CHAR(1) := 'Y';
+BEGIN
+   OPEN cur_basket;
+   LOOP 
+     FETCH cur_basket INTO rec_basket;
+      EXIT WHEN cur_basket%NOTFOUND;
+      IF rec_basket.stock < rec_basket.qty THEN lv_flag_txt := 'N'; END IF;
+   END LOOP;
+   CLOSE cur_basket;
+   IF lv_flag_txt = 'Y' THEN DBMS_OUTPUT.PUT_LINE('All items in stock!'); END IF;
+   IF lv_flag_txt = 'N' THEN DBMS_OUTPUT.PUT_LINE('All items NOT in stock!'); END IF;   
+END;
+
+-- FIGURE 4-35 Raising an error with a CASE statement
+DECLARE
+  lv_tax_num NUMBER (2,2);
+BEGIN
+  CASE 'NJ'
+    WHEN 'VA' THEN lv_tax_num := .04;
+    WHEN 'NO' THEN lv_tax_num := .02;
+    WHEN 'NY' THEN lv_tax_num := .06;
+    -- Add a clause for 'NJ'
+    WHEN 'NJ' THEN lv_tax_num := .05; -- Replace .05 with the actual tax rate for NJ
+    ELSE lv_tax_num := .00; -- Default case
+  END CASE;
+  DBMS_OUTPUT.PUT_LINE('tax rate = ' || lv_tax_num);
+END;
 
 -- Assignment 4-5: Handling Predefined Exceptions
 -- A block of code has been created to retrieve basic customer information (see the
