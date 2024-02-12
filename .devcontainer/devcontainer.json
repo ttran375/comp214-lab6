@@ -1,26 +1,31 @@
-
 {
-	"name": "Default Linux Universal",
-  "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
-	"customizations": {
-        "vscode": {
-          "extensions": [
-            "GitHub.copilot",
-            "CrappyCodeMaker.ccm-plsql-oracle",
-            "DavidAnson.vscode-markdownlint",
-            "EwanDubashinski.plsqllint",
-            "Oracle.oracledevtools",
-            "Oracle.sql-developer",
-            "adpyke.vscode-sql-formatter",
-            "apng.orclapex-autocomplete",
-            "casian.plsql",
-            "markdownlint.markdownlint",
-            "mycelo.oracle-plsql",
-            "streetsidesoftware.code-spell-checker",
-            "vsls-contrib.gitdoc",
-            "xyz.plsql-language"
-          ]
-        }
-      }
-
+  "name": "Docker in Docker",
+  "image": "mcr.microsoft.com/devcontainers/base:bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableNonRootDocker": "true",
+      "moby": "true"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "vsls-contrib.gitdoc",
+        "CrappyCodeMaker.ccm-plsql-oracle",
+        "EwanDubashinski.plsqllint",
+        "Oracle.oracledevtools",
+        "Oracle.sql-developer",
+        "apng.orclapex-autocomplete",
+        "casian.plsql",
+        "mycelo.oracle-plsql",
+        "xyz.plsql-language",
+        "streetsidesoftware.code-spell-checker",
+        "EditorConfig.EditorConfig",
+        "DavidAnson.vscode-markdownlint",
+        "markdownlint.markdownlint"
+      ]
+    }
+  }
 }

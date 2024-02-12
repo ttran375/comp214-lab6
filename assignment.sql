@@ -10,36 +10,34 @@
 -- section. The cursor must be manipulated with explicit actions of OPEN, FETCH, and CLOSE.
 -- A variable named lv_flag_txt is used to store the status of the stock check. The results
 -- should look like Figure 4-33.
-SET SERVEROUTPUT ON
-
 DECLARE
-    CURSOR basket_items_cur IS
-    SELECT
-        bi.idBasketItem,
-        bi.idProduct,
-        bi.Quantity,
-        p.stock
-    FROM
-        bb_basketitem bi
-        JOIN bb_product p
-        ON bi.idProduct = p.idProduct
-    WHERE
-        bi.idBasket = :basket_number;
-    basket_item_rec basket_items_cur%ROWTYPE;
-    lv_flag_txt     VARCHAR2(100) := 'All items in stock!';
+  CURSOR basket_items_cur IS
+  SELECT
+    bi.idBasketItem,
+    bi.idProduct,
+    bi.Quantity,
+    p.stock
+  FROM
+    bb_basketitem bi
+    JOIN bb_product p
+    ON bi.idProduct = p.idProduct
+  WHERE
+    bi.idBasket = :basket_number;
+  basket_item_rec basket_items_cur%ROWTYPE;
+  lv_flag_txt     VARCHAR2(100) := 'All items in stock!';
 BEGIN
-    OPEN basket_items_cur;
-    LOOP
-        FETCH basket_items_cur INTO basket_item_rec;
-        EXIT WHEN basket_items_cur%NOTFOUND;
-        IF basket_item_rec.Quantity > basket_item_rec.stock THEN
-            lv_flag_txt := 'All items NOT in stock!';
-            EXIT;
-        END IF;
-    END LOOP;
+  OPEN basket_items_cur;
+  LOOP
+    FETCH basket_items_cur INTO basket_item_rec;
+    EXIT WHEN basket_items_cur%NOTFOUND;
+    IF basket_item_rec.Quantity > basket_item_rec.stock THEN
+      lv_flag_txt := 'All items NOT in stock!';
+      EXIT;
+    END IF;
+  END LOOP;
 
-    CLOSE basket_items_cur;
-    DBMS_OUTPUT.PUT_LINE(lv_flag_txt);
+  CLOSE basket_items_cur;
+  DBMS_OUTPUT.PUT_LINE(lv_flag_txt);
 END;
 /
 
