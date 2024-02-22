@@ -5,23 +5,23 @@
 -- made should be displayed. The S indicates displaying summary data of the pledge payment
 -- total for each pledge the donor has made.
 DECLARE
-  v_donor_id       DD_Donor.idDonor%TYPE;
-  v_indicator      VARCHAR2(1);
+  lv_donor_id       DD_Donor.idDonor%TYPE;
+  lv_indicator      VARCHAR2(1);
  -- Define cursor variable
   TYPE payment_cursor_type IS
     REF CURSOR;
-  v_payment_cursor payment_cursor_type;
+  lv_payment_cursor payment_cursor_type;
  -- Declare variables to store query results
-  v_payment_id     DD_Payment.idPay%TYPE;
-  v_payment_amt    DD_Payment.Payamt%TYPE;
-  v_payment_date   DD_Payment.Paydate%TYPE;
+  lv_payment_id     DD_Payment.idPay%TYPE;
+  lv_payment_amt    DD_Payment.Payamt%TYPE;
+  lv_payment_date   DD_Payment.Paydate%TYPE;
 BEGIN
  -- Get user input for donor ID and indicator
-  v_donor_id := &donor_id; -- Replace &donor_id with the actual variable to get donor ID from user
-  v_indicator := UPPER('&indicator'); -- Replace &indicator with the actual variable to get indicator from user
+  lv_donor_id := &donor_id; -- Replace &donor_id with the actual variable to get donor ID from user
+  lv_indicator := UPPER('&indicator'); -- Replace &indicator with the actual variable to get indicator from user
  -- Open cursor based on user input
-  IF v_indicator = 'D' THEN
-    OPEN v_payment_cursor FOR
+  IF lv_indicator = 'D' THEN
+    OPEN lv_payment_cursor FOR
       SELECT
         p.idPay,
         p.Payamt,
@@ -31,9 +31,9 @@ BEGIN
         JOIN DD_Pledge pl
         ON p.idPledge = pl.idPledge
       WHERE
-        pl.idDonor = v_donor_id;
-  ELSIF v_indicator = 'S' THEN
-    OPEN v_payment_cursor FOR
+        pl.idDonor = lv_donor_id;
+  ELSIF lv_indicator = 'S' THEN
+    OPEN lv_payment_cursor FOR
       SELECT
         pl.idPledge,
         SUM(p.Payamt) AS total_payment
@@ -42,7 +42,7 @@ BEGIN
         JOIN DD_Pledge pl
         ON p.idPledge = pl.idPledge
       WHERE
-        pl.idDonor = v_donor_id
+        pl.idDonor = lv_donor_id
       GROUP BY
         pl.idPledge;
   ELSE
@@ -51,23 +51,23 @@ BEGIN
   END IF;
  -- Fetch and display results
   LOOP
-    FETCH v_payment_cursor INTO v_payment_id, v_payment_amt, v_payment_date;
-    EXIT WHEN v_payment_cursor%NOTFOUND;
-    IF v_indicator = 'D' THEN
+    FETCH lv_payment_cursor INTO lv_payment_id, lv_payment_amt, lv_payment_date;
+    EXIT WHEN lv_payment_cursor%NOTFOUND;
+    IF lv_indicator = 'D' THEN
       DBMS_OUTPUT.PUT_LINE('Payment ID: '
-                           || v_payment_id
+                           || lv_payment_id
                            || ', Amount: '
-                           || v_payment_amt
+                           || lv_payment_amt
                            || ', Date: '
-                           || v_payment_date);
-    ELSIF v_indicator = 'S' THEN
+                           || lv_payment_date);
+    ELSIF lv_indicator = 'S' THEN
       DBMS_OUTPUT.PUT_LINE('Pledge ID: '
-                           || v_payment_id
+                           || lv_payment_id
                            || ', Total Payment: '
-                           || v_payment_amt);
+                           || lv_payment_amt);
     END IF;
   END LOOP;
  -- Close cursor
-  CLOSE v_payment_cursor;
+  CLOSE lv_payment_cursor;
 END;
 /
