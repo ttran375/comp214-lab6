@@ -5,14 +5,14 @@
 -- by payment date. For the first payment made for each pledge, display “first payment” on that
 -- output row.
 DECLARE
-  vDonorID       NUMBER := 303;
-  vPledgeID      dd_pledge.idPledge%TYPE;
-  vPledgeAmt     dd_pledge.Pledgeamt%TYPE;
-  vPayMonths     dd_pledge.paymonths%TYPE;
-  vPaymentDate   dd_payment.Paydate%TYPE;
-  vPaymentAmount dd_payment.Payamt%TYPE;
-  vFirstPayment  VARCHAR2(20);
-  vCounter       NUMBER := 0;
+  lv_donor_id       NUMBER := 303;
+  lv_pledge_id      dd_pledge.idPledge%TYPE;
+  lv_pledge_amt     dd_pledge.Pledgeamt%TYPE;
+  lv_pay_months     dd_pledge.paymonths%TYPE;
+  lv_payment_date   dd_payment.Paydate%TYPE;
+  lv_payment_amount dd_payment.Payamt%TYPE;
+  lv_first_payment  VARCHAR2(20);
+  lv_counter        NUMBER := 0;
   CURSOR pledge_cursor IS
   SELECT
     p.idPledge,
@@ -25,35 +25,35 @@ DECLARE
     JOIN dd_payment py
     ON p.idPledge = py.idPledge
   WHERE
-    p.idDonor = vDonorID
+    p.idDonor = lv_donor_id
   ORDER BY
     p.idPledge,
     py.Paydate;
 BEGIN
   FOR pledge_rec IN pledge_cursor LOOP
-    vCounter := vCounter + 1;
-    vPledgeID := pledge_rec.idPledge;
-    vPledgeAmt := pledge_rec.Pledgeamt;
-    vPayMonths := pledge_rec.paymonths;
-    vPaymentDate := pledge_rec.Paydate;
-    vPaymentAmount := pledge_rec.Payamt;
-    IF vCounter = 1 THEN
-      vFirstPayment := 'first payment';
+    lv_counter := lv_counter + 1;
+    lv_pledge_id := pledge_rec.idPledge;
+    lv_pledge_amt := pledge_rec.Pledgeamt;
+    lv_pay_months := pledge_rec.paymonths;
+    lv_payment_date := pledge_rec.Paydate;
+    lv_payment_amount := pledge_rec.Payamt;
+    IF lv_counter = 1 THEN
+      lv_first_payment := 'first payment';
     ELSE
-      vFirstPayment := NULL;
+      lv_first_payment := NULL;
     END IF;
 
     DBMS_OUTPUT.PUT_LINE('Pledge ID: '
-                         || vPledgeID
+                         || lv_pledge_id
                          || ', Pledge Amount: '
-                         || vPledgeAmt
+                         || lv_pledge_amt
                          || ', Pay Months: '
-                         || vPayMonths
+                         || lv_pay_months
                          || ', Payment Date: '
-                         || vPaymentDate
+                         || lv_payment_date
                          || ', Payment Amount: '
-                         || vPaymentAmount
+                         || lv_payment_amount
                          || ', '
-                         || vFirstPayment);
+                         || lv_first_payment);
   END LOOP;
 END;
