@@ -1,0 +1,10 @@
+-- Case 4-2: Working with More Movie Rentals
+-- Because business is growing and the movie stock is increasing at More Movie Rentals, the
+-- manager wants to do more inventory evaluations. One item of interest is any movie with a total
+-- stock value of $75 or more. The manager wants to focus on the revenue these movies are
+-- generating to make sure the stock level is warranted. To make these stock queries more
+-- efficient, the application team decides to add a column named STK_FLAG to the MM_MOVIE
+-- table that stores an asterisk (*) if the stock value is $75 or more. Otherwise, the value should
+-- be NULL. Add the column and create an anonymous block containing a CURSOR FOR loop to
+-- perform this task. The company plans to run this program monthly to update the STK_FLAG
+-- column before the inventory evaluation.
