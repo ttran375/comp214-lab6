@@ -5,16 +5,16 @@
 -- donor ID. If this error occurs, display the message “This ID is already assigned.” Test the code
 -- by changing donor ID 305. (Don’t include a COMMIT statement; roll back any DML actions used.)
 DECLARE
-  v_old_donor_id DD_Donor.idDonor%TYPE := 305; -- Old donor ID to change
-  v_new_donor_id DD_Donor.idDonor%TYPE := 999; -- New donor ID
+  lv_old_donor_id DD_Donor.idDonor%TYPE := 305; -- Old donor ID to change
+  lv_new_donor_id DD_Donor.idDonor%TYPE := 999; -- New donor ID
 BEGIN
  -- Attempt to change donor ID
   BEGIN
     UPDATE DD_Donor
     SET
-      idDonor = v_new_donor_id
+      idDonor = lv_new_donor_id
     WHERE
-      idDonor = v_old_donor_id;
+      idDonor = lv_old_donor_id;
     DBMS_OUTPUT.PUT_LINE('Donor ID changed successfully.');
   EXCEPTION
     WHEN DUP_VAL_ON_INDEX THEN
@@ -27,7 +27,7 @@ BEGIN
     FROM
       DD_Donor
     WHERE
-      idDonor = v_new_donor_id
+      idDonor = lv_new_donor_id
   ) LOOP
     DBMS_OUTPUT.PUT_LINE('New Donor ID: '
                          || donor_rec.idDonor
