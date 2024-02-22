@@ -12,12 +12,12 @@
 -- B 500
 DECLARE
  -- Declare variables
-  v_donor_type    CHAR(1);
-  v_pledge_amount NUMBER(8, 2);
+  lv_donor_type    CHAR(1);
+  lv_pledge_amount NUMBER(8, 2);
 BEGIN
  -- Set donor type and pledge amount
-  v_donor_type := 'I'; -- Individual
-  v_pledge_amount := 250;
+  lv_donor_type := 'I'; -- Individual
+  lv_pledge_amount := 250;
  -- Use a cursor to retrieve data based on donor type and pledge amount
   FOR pledge_rec IN (
     SELECT
@@ -31,8 +31,8 @@ BEGIN
       JOIN DD_Pledge p
       ON d.idDonor = p.idDonor
     WHERE
-      d.Typecode = v_donor_type
-      AND p.Pledgeamt > v_pledge_amount
+      d.Typecode = lv_donor_type
+      AND p.Pledgeamt > lv_pledge_amount
   ) LOOP
  -- Display retrieved data
     DBMS_OUTPUT.PUT_LINE('Donor Name: '
