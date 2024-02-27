@@ -1,19 +1,23 @@
 DECLARE
-  v_state CHAR(2) := 'NJ';
-  v_tax_rate NUMBER;
+   CURSOR cur_basket IS
+     SELECT bi.idBasket, bi.quantity, p.stock
+       FROM bb_basketitem bi INNER JOIN bb_product p
+         USING (idProduct)
+       WHERE bi.idBasket = 6;
+   TYPE type_basket IS RECORD (
+     basket bb_basketitem.idBasket%TYPE,
+     qty bb_basketitem.quantity%TYPE,
+     stock bb_product.stock%TYPE);
+   rec_basket type_basket;
+   lv_flag_txt CHAR(1) := 'Y';
 BEGIN
-  v_tax_rate := 
-    CASE v_state
-      WHEN 'CA' THEN 0.0825
-      WHEN 'NY' THEN 0.08875
-      WHEN 'IL' THEN 0.0875
-      ELSE NULL -- Handle unexpected states
-    END;
-    
-  IF v_tax_rate IS NULL THEN
-    DBMS_OUTPUT.PUT_LINE('No tax');
-  ELSE
-    DBMS_OUTPUT.PUT_LINE('Tax rate for ' || v_state || ' is ' || v_tax_rate);
-  END IF;
+   OPEN cur_basket;
+   LOOP 
+     FETCH cur_basket INTO rec_basket;
+      EXIT WHEN cur_basket%NOTFOUND;
+      IF rec_basket.stock < rec_basket.qty THEN lv_flag_txt := 'N'; END IF;
+   END LOOP;
+   CLOSE cur_basket;
+   IF lv_flag_txt = 'Y' THEN DBMS_OUTPUT.PUT_LINE('All items in stock!'); END IF;
+   IF lv_flag_txt = 'N' THEN DBMS_OUTPUT.PUT_LINE('All items NOT in stock!'); END IF;   
 END;
-/
