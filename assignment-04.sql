@@ -10,6 +10,7 @@
 -- and displays “No tax” onscreen.
 -- 4. Run the block again. Your results should look like Figure 4-36. Now the error is handled in
 -- the block’s EXCEPTION section.
+
 -- FIGURE 4-35 Raising an error with a CASE statement
 DECLARE
   lv_tax_num NUMBER(2,2);
