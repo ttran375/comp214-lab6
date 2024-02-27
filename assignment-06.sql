@@ -6,7 +6,8 @@
 -- must be executed to add the check constraint. The next item is a PL/SQL block containing an
 -- INSERT action that tests this check constraint. Add code to this block to trap the check
 -- constraint violation and display the message.
-ALTER TABLE bb_basketitem ADD CONSTRAINT bitems_qty_ck CHECK (quantity < 20);
+ALTER TABLE bb_basketitem
+  ADD CONSTRAINT bitems_qty_ck CHECK (quantity < 20);
 
 BEGIN
   BEGIN
@@ -20,7 +21,11 @@ BEGIN
       3
     );
   EXCEPTION
-    WHEN VALUE_ERROR THEN
-      DBMS_OUTPUT.PUT_LINE('Check Quantity');
+    WHEN OTHERS THEN
+      IF SQLCODE = -2290 THEN -- Check constraint violation error code
+        DBMS_OUTPUT.PUT_LINE('Check Quantity'); -- Display the message
+      ELSE
+        RAISE; -- Re-raise the exception if it's not the expected check constraint violation
+      END IF;
   END;
 END;

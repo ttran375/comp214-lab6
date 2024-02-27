@@ -5,6 +5,7 @@
 -- needs to be added to the block that displays the message “Invalid shopper ID” onscreen. Use
 -- an initialized variable named lv_shopper_num to provide a shopper ID. Test the block with the
 -- shopper ID 99.
+
 -- Declare a block
 DECLARE
   -- Declare a record variable of type 'bb_shopper'
