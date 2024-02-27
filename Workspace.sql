@@ -1,38 +1,63 @@
 DECLARE
-  CURSOR cur_basket IS
+  CURSOR cur_shopper IS
   SELECT
-    bi.idBasket,
-    bi.quantity,
-    p.stock
+    a.idShopper,
+    a.promo,
+    b.total
   FROM
-    bb_basketitem bi
-    INNER JOIN bb_product p
-    USING(idProduct)
+    bb_shopper a,
+    (
+      SELECT
+        b.idShopper,
+        SUM(bi.quantity*bi.price) total
+      FROM
+        bb_basketitem bi,
+        bb_basket     b
+      WHERE
+        bi.idBasket = b.idBasket
+      GROUP BY
+        idShopper
+    )          b
   WHERE
-    bi.idBasket = 6;
-  TYPE type_basket IS RECORD (
-    basket bb_basketitem.idBasket%TYPE,
-    qty bb_basketitem.quantity%TYPE,
-    stock bb_product.stock%TYPE
-  );
-  rec_basket  type_basket;
-  lv_flag_txt CHAR(1) := 'Y';
+    a.idShopper = b.idShopper FOR UPDATE OF a.idShopper NOWAIT;
+  lv_promo_txt CHAR(1);
 BEGIN
-  OPEN cur_basket;
-  LOOP
-    FETCH cur_basket INTO rec_basket;
-    EXIT WHEN cur_basket%NOTFOUND;
-    IF rec_basket.stock < rec_basket.qty THEN
-      lv_flag_txt := 'N';
+  FOR rec_shopper IN cur_shopper LOOP
+    lv_promo_txt := 'X';
+    IF rec_shopper.total > 100 THEN
+      lv_promo_txt := 'A';
+    END IF;
+
+    IF rec_shopper.total BETWEEN 50 AND 99 THEN
+      lv_promo_txt := 'B';
+    END IF;
+
+    IF lv_promo_txt <> 'X' THEN
+      UPDATE bb_shopper
+      SET
+        promo = lv_promo_txt
+      WHERE
+        CURRENT OF cur_shopper;
     END IF;
   END LOOP;
 
-  CLOSE cur_basket;
-  IF lv_flag_txt = 'Y' THEN
-    DBMS_OUTPUT.PUT_LINE('All items in stock!');
-  END IF;
-
-  IF lv_flag_txt = 'N' THEN
-    DBMS_OUTPUT.PUT_LINE('All items NOT in stock!');
-  END IF;
+  COMMIT;
 END;
+/
+
+-- FIGURE 4-34 Querying the BB_SHOPPER table to check the PROMO column
+SELECT
+  idShopper,
+  s.promo,
+  SUM(bi.quantity*bi.price) total
+FROM
+  bb_shopper    s
+  INNER JOIN bb_basket b
+  USING (idShopper)
+  INNER JOIN bb_basketitem bi
+  USING (idBasket)
+GROUP BY
+  idShopper,
+  s.promo
+ORDER BY
+  idShopper;
