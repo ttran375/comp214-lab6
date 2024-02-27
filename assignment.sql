@@ -63,6 +63,23 @@ END;
 -- ID” onscreen. Use an initialized variable named lv_old_num with a value of 30 and another
 -- named lv_new_num with a value of 4 to provide values to the block. First, verify that no item
 -- rows with the basket ID 30 exist in the BB_BASKETITEM table.
+DECLARE
+  lv_old_num NUMBER := 30;
+  lv_new_num NUMBER := 4;
+BEGIN
+  -- Verify that no item rows with the basket ID 30 exist
+  IF NOT EXISTS (SELECT 1 FROM bb_basketitem WHERE idBasket = lv_old_num) THEN
+    DBMS_OUTPUT.PUT_LINE('No items found with the original basket ID.');
+  ELSE
+    -- Update basket ID for items
+    UPDATE bb_basketitem
+    SET idBasket = lv_new_num
+    WHERE idBasket = lv_old_num;
+  END IF;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Invalid original basket ID');
+END;
 
 -- Assignment 4-8: Processing and Updating a Group of Rows
 -- To help track employee information, a new EMPLOYEE table was added to the Brewbean’s
