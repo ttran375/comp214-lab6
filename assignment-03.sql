@@ -22,23 +22,10 @@ WHERE
   idShopper = 22;
 
 COMMIT;
-/
-
--- Begin PL/SQL anonymous block
-BEGIN
-  -- Update the 'promo' column of all rows in the 'bb_shopper' table where 'promo' is not NULL to NULL
-  UPDATE bb_shopper
-  SET
-    promo = NULL
-  WHERE
-    promo IS NOT NULL;
--- End PL/SQL anonymous block
-END;
-/
 
 -- Declare a PL/SQL anonymous block
 DECLARE
-  -- Declare a variable to hold the number of rows updated
+ -- Declare a variable to hold the number of rows updated
   lv_rows_updated NUMBER;
 BEGIN
  -- Update the 'promo' column of all rows in the 'bb_shopper' table where 'promo' is not NULL to NULL
@@ -52,7 +39,7 @@ BEGIN
  -- Display the number of rows updated
   DBMS_OUTPUT.PUT_LINE('Number of rows updated: '
                        || lv_rows_updated);
--- End PL/SQL anonymous block
+ -- End PL/SQL anonymous block
 END;
 /
 
