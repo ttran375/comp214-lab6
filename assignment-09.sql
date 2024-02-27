@@ -4,7 +4,9 @@
 -- payments, payment date, and payment amount. The list should be sorted by pledge ID and then
 -- by payment date. For the first payment made for each pledge, display “first payment” on that
 -- output row.
+
 DECLARE
+ -- Declare variables to store donor information, pledge details, and payment details
   lv_donor_id       NUMBER := 303;
   lv_pledge_id      dd_pledge.idPledge%TYPE;
   lv_pledge_amt     dd_pledge.Pledgeamt%TYPE;
@@ -13,6 +15,7 @@ DECLARE
   lv_payment_amount dd_payment.Payamt%TYPE;
   lv_first_payment  VARCHAR2(20);
   lv_counter        NUMBER := 0;
+ -- Cursor to select pledge and payment details for the specified donor
   CURSOR pledge_cursor IS
   SELECT
     p.idPledge,
@@ -30,19 +33,24 @@ DECLARE
     p.idPledge,
     py.Paydate;
 BEGIN
+ -- Loop through each pledge and its corresponding payments
   FOR pledge_rec IN pledge_cursor LOOP
+ -- Increment the counter for each pledge
     lv_counter := lv_counter + 1;
+ -- Assign pledge details to variables
     lv_pledge_id := pledge_rec.idPledge;
     lv_pledge_amt := pledge_rec.Pledgeamt;
     lv_pay_months := pledge_rec.paymonths;
+ -- Assign payment details to variables
     lv_payment_date := pledge_rec.Paydate;
     lv_payment_amount := pledge_rec.Payamt;
+ -- Determine if it's the first payment for the pledge
     IF lv_counter = 1 THEN
       lv_first_payment := 'first payment';
     ELSE
       lv_first_payment := NULL;
     END IF;
-
+ -- Output pledge and payment details along with whether it's the first payment
     DBMS_OUTPUT.PUT_LINE('Pledge ID: '
                          || lv_pledge_id
                          || ', Pledge Amount: '

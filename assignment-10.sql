@@ -1,7 +1,7 @@
 -- Assignment 4-10: Using a Different Form of Explicit Cursors
 -- Redo Assignment 4-9, but use a different cursor form to perform the same task.
 DECLARE
-  lv_donor_id      NUMBER := 303; -- Specify the donor ID for which you want to retrieve information
+  lv_donor_id      NUMBER := 303;
   lv_first_payment VARCHAR2(20);
   CURSOR pledge_cursor IS
   SELECT
@@ -21,14 +21,14 @@ DECLARE
     py.Paydate;
 BEGIN
   FOR pledge_rec IN pledge_cursor LOOP
- -- Check if it's the first payment for the pledge
+
     lv_first_payment := CASE
       WHEN pledge_cursor%ROWCOUNT = 1 THEN
         'first payment'
       ELSE
         NULL
     END;
- -- Display the information
+
     DBMS_OUTPUT.PUT_LINE('Pledge ID: '
                          || pledge_rec.idPledge
                          || ', Pledge Amount: '
