@@ -20,7 +20,6 @@ BEGIN
   END;
 END;
 
-
 -- Assignment 4-6: Handling Exceptions with Undefined Errors
 -- Brewbean’s wants to add a check constraint on the QUANTITY column of the
 -- BB_BASKETITEM table. If a shopper enters a quantity value greater than 20 for an item,
