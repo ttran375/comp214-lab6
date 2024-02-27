@@ -24,33 +24,39 @@ WHERE
 COMMIT;
 /
 
+-- Begin PL/SQL anonymous block
 BEGIN
+  -- Update the 'promo' column of all rows in the 'bb_shopper' table where 'promo' is not NULL to NULL
   UPDATE bb_shopper
   SET
     promo = NULL
   WHERE
     promo IS NOT NULL;
+-- End PL/SQL anonymous block
 END;
 /
 
+-- Declare a PL/SQL anonymous block
 DECLARE
+  -- Declare a variable to hold the number of rows updated
   lv_rows_updated NUMBER;
 BEGIN
- -- Update the PROMO column and capture the number of rows updated
+ -- Update the 'promo' column of all rows in the 'bb_shopper' table where 'promo' is not NULL to NULL
   UPDATE bb_shopper
   SET
     promo = NULL
   WHERE
     promo IS NOT NULL;
- -- Get the number of rows updated
+ -- Get the number of rows updated by the last SQL statement
   lv_rows_updated := SQL%ROWCOUNT;
  -- Display the number of rows updated
   DBMS_OUTPUT.PUT_LINE('Number of rows updated: '
                        || lv_rows_updated);
+-- End PL/SQL anonymous block
 END;
 /
 
--- There are indeed no rows where promo is not NULL, and thus, the update 
+-- There are indeed no rows where promo is not NULL, and thus, the update
 -- statement will not affect any rows
 SELECT
   COUNT(*)
