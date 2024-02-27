@@ -6,14 +6,16 @@
 -- an initialized variable named lv_shopper_num to provide a shopper ID. Test the block with the
 -- shopper ID 99.
 DECLARE
-  rec_shopper bb_shopper%ROWTYPE;
-  lv_shopper_num bb_shopper.idShopper%TYPE := 99; -- Initialize lv_shopper_num with the shopper ID
+  rec_shopper    bb_shopper%ROWTYPE;
+  lv_shopper_num bb_shopper.idShopper%TYPE := 99;
 BEGIN
   BEGIN
-    SELECT *
-    INTO rec_shopper
-    FROM bb_shopper
-    WHERE idShopper = lv_shopper_num;
+    SELECT
+      * INTO rec_shopper
+    FROM
+      bb_shopper
+    WHERE
+      idShopper = lv_shopper_num;
   EXCEPTION
     WHEN NO_DATA_FOUND THEN
       DBMS_OUTPUT.PUT_LINE('Invalid shopper ID');
