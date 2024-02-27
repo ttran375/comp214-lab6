@@ -5,6 +5,7 @@
 -- editor (such as Notepad). Run the UPDATE and COMMIT statements at the top of this file (not
 -- the anonymous block at the end). Modify the anonymous block so that it displays the number of
 -- rows updated onscreen. Run the block.
+
 UPDATE bb_shopper
 SET
   promo = NULL;
@@ -23,28 +24,26 @@ WHERE
 
 COMMIT;
 
--- Declare a PL/SQL anonymous block
 DECLARE
- -- Declare a variable to hold the number of rows updated
+ -- Declare a variable to store the number of rows updated
   lv_rows_updated NUMBER;
 BEGIN
- -- Update the 'promo' column of all rows in the 'bb_shopper' table where 'promo' is not NULL to NULL
+ -- Update the bb_shopper table
   UPDATE bb_shopper
+ -- Set the promo column to NULL where it is not already NULL
   SET
     promo = NULL
   WHERE
     promo IS NOT NULL;
- -- Get the number of rows updated by the last SQL statement
+ -- Store the number of rows affected by the update operation
   lv_rows_updated := SQL%ROWCOUNT;
- -- Display the number of rows updated
+ -- Output the number of rows updated to the console
   DBMS_OUTPUT.PUT_LINE('Number of rows updated: '
                        || lv_rows_updated);
- -- End PL/SQL anonymous block
 END;
 /
 
--- There are indeed no rows where promo is not NULL, and thus, the update
--- statement will not affect any rows
+-- Query to count the number of rows in bb_shopper where promo is not NULL
 SELECT
   COUNT(*)
 FROM
