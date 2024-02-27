@@ -45,3 +45,11 @@ BEGIN
   COMMIT; -- Commit the changes
 END;
 /
+
+SELECT
+  movie_id,
+  movie_title,
+  movie_value,
+  STK_FLAG
+FROM
+  mm_movie;
