@@ -6,13 +6,20 @@
 -- an initialized variable named lv_shopper_num to provide a shopper ID. Test the block with the
 -- shopper ID 99.
 DECLARE
- rec_shopper bb_shopper%ROWTYPE;
+  rec_shopper bb_shopper%ROWTYPE;
+  lv_shopper_num bb_shopper.idShopper%TYPE := 99; -- Initialize lv_shopper_num with the shopper ID
 BEGIN
- SELECT *
-  INTO rec_shopper
-  FROM bb_shopper
-  WHERE idShopper = ??;
+  BEGIN
+    SELECT *
+    INTO rec_shopper
+    FROM bb_shopper
+    WHERE idShopper = lv_shopper_num;
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('Invalid shopper ID');
+  END;
 END;
+
 
 -- Assignment 4-6: Handling Exceptions with Undefined Errors
 -- Brewbean’s wants to add a check constraint on the QUANTITY column of the
@@ -22,6 +29,13 @@ END;
 -- must be executed to add the check constraint. The next item is a PL/SQL block containing an
 -- INSERT action that tests this check constraint. Add code to this block to trap the check
 -- constraint violation and display the message.
+ALTER TABLE bb_basketitem
+  ADD CONSTRAINT bitems_qty_ck CHECK (quantity < 20);
+
+BEGIN
+  INSERT INTO bb_basketitem 
+   VALUES (88,8,10.8,21,16,2,3);
+END;
 
 -- Assignment 4-7: Handling Exceptions with User-Defined Errors
 -- Sometimes Brewbean’s customers mistakenly leave an item out of a basket that’s already been
