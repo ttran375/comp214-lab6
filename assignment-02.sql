@@ -13,9 +13,7 @@
 -- performed, the FOR UPDATE and WHERE CURRENT OF clauses are used.
 -- 3. Run a query, as shown in Figure 4-34, to check the results.
 
--- Declare a block
 DECLARE
- -- Declare a cursor to select shopper IDs, their promo status, and their total basket value
   CURSOR cur_shopper IS
   SELECT
     a.idShopper,
@@ -24,7 +22,6 @@ DECLARE
   FROM
     bb_shopper a,
     (
- -- Subquery to calculate the total value of each shopper's basket
       SELECT
         b.idShopper,
         SUM(bi.quantity*bi.price) total
@@ -37,38 +34,33 @@ DECLARE
         idShopper
     )          b
   WHERE
-    a.idShopper = b.idShopper FOR UPDATE OF a.idShopper NOWAIT; -- Lock the rows for update
- -- Declare a variable to hold the promo status
+    a.idShopper = b.idShopper FOR UPDATE OF a.idShopper NOWAIT;
   lv_promo_txt CHAR(1);
- -- Begin the execution block
 BEGIN
- -- Loop through each row returned by the cursor
   FOR rec_shopper IN cur_shopper LOOP
- -- Initialize the promo status to 'X'
     lv_promo_txt := 'X';
- -- If the total basket value is greater than 100, set the promo status to 'A'
     IF rec_shopper.total > 100 THEN
       lv_promo_txt := 'A';
     END IF;
- -- If the total basket value is between 50 and 99, set the promo status to 'B'
+
     IF rec_shopper.total BETWEEN 50 AND 99 THEN
       lv_promo_txt := 'B';
     END IF;
- -- If the promo status is not 'X', update the promo status in the bb_shopper table
+
     IF lv_promo_txt <> 'X' THEN
       UPDATE bb_shopper
       SET
         promo = lv_promo_txt
       WHERE
-        CURRENT OF cur_shopper; -- Update the current row of the cursor
+        CURRENT OF cur_shopper;
     END IF;
   END LOOP;
- -- Commit the changes
+
   COMMIT;
 END;
 /
 
--- Query to check the promo status and total basket value of each shopper
+-- FIGURE 4-34 Querying the BB_SHOPPER table to check the PROMO column
 SELECT
   idShopper,
   s.promo,
