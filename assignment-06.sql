@@ -9,23 +9,35 @@
 ALTER TABLE bb_basketitem
   ADD CONSTRAINT bitems_qty_ck CHECK (quantity < 20);
 
+-- Begin the outer block
 BEGIN
+  -- Begin the inner block
   BEGIN
+    -- Attempt to insert a new row into the 'bb_basketitem' table
+    -- The values provided violate the 'bitems_qty_ck' check constraint because the 'quantity' value is 21
     INSERT INTO bb_basketitem VALUES (
       88,
       8,
       10.8,
-      21,
+      21, -- This value violates the 'bitems_qty_ck' check constraint
       16,
       2,
       3
     );
+  -- Handle exceptions
   EXCEPTION
+    -- Catch all exceptions
     WHEN OTHERS THEN
-      IF SQLCODE = -2290 THEN -- Check constraint violation error code
-        DBMS_OUTPUT.PUT_LINE('Check Quantity'); -- Display the message
+      -- If the error code is -2290, which represents a check constraint violation
+      IF SQLCODE = -2290 THEN
+        -- Output a message indicating that the 'quantity' value violated the check constraint
+        DBMS_OUTPUT.PUT_LINE('Check Quantity');
+      -- If the exception is not a check constraint violation
       ELSE
-        RAISE; -- Re-raise the exception if it's not the expected check constraint violation
+        -- Re-raise the exception
+        RAISE;
       END IF;
+  -- End the inner block
   END;
+-- End the outer block
 END;

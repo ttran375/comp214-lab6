@@ -12,29 +12,50 @@
 -- ID” onscreen. Use an initialized variable named lv_old_num with a value of 30 and another
 -- named lv_new_num with a value of 4 to provide values to the block. First, verify that no item
 -- rows with the basket ID 30 exist in the BB_BASKETITEM table.
+
+-- Declare a block
 DECLARE
+  -- Declare a variable to hold the old basket ID and initialize it to 30
   lv_old_num NUMBER := 30;
+  
+  -- Declare a variable to hold the new basket ID and initialize it to 4
   lv_new_num NUMBER := 4;
-  lv_count    NUMBER;
+  
+  -- Declare a variable to hold the count of items with the old basket ID
+  lv_count NUMBER;
+
+-- Begin the execution block
 BEGIN
- -- Check if any items exist with the original basket ID
+  -- Select the count of items from the 'bb_basketitem' table where 'idBasket' equals the value of 'lv_old_num'
+  -- Store the result in 'lv_count'
   SELECT
     COUNT(*) INTO lv_count
   FROM
     bb_basketitem
   WHERE
     idBasket = lv_old_num;
+    
+  -- If no items were found with the old basket ID
   IF lv_count = 0 THEN
+    -- Output a message indicating that no items were found
     DBMS_OUTPUT.PUT_LINE('No items found with the original basket ID.');
+  -- If items were found with the old basket ID
   ELSE
- -- Update basket ID for items
+    -- Update the 'idBasket' column of items in the 'bb_basketitem' table where 'idBasket' equals the value of 'lv_old_num'
+    -- Set 'idBasket' to the value of 'lv_new_num'
     UPDATE bb_basketitem
     SET
       idBasket = lv_new_num
     WHERE
       idBasket = lv_old_num;
+  -- End the IF statement
   END IF;
+  
+-- Handle exceptions
 EXCEPTION
+  -- If no data was found (i.e., there is no basket with the ID stored in 'lv_old_num'), then handle the exception
   WHEN NO_DATA_FOUND THEN
+    -- Output a message indicating that the original basket ID is invalid
     DBMS_OUTPUT.PUT_LINE('Invalid original basket ID');
+-- End the execution block
 END;
