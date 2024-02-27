@@ -66,15 +66,24 @@ END;
 DECLARE
   lv_old_num NUMBER := 30;
   lv_new_num NUMBER := 4;
+  v_count    NUMBER;
 BEGIN
-  -- Verify that no item rows with the basket ID 30 exist
-  IF NOT EXISTS (SELECT 1 FROM bb_basketitem WHERE idBasket = lv_old_num) THEN
+ -- Check if any items exist with the original basket ID
+  SELECT
+    COUNT(*) INTO v_count
+  FROM
+    bb_basketitem
+  WHERE
+    idBasket = lv_old_num;
+  IF v_count = 0 THEN
     DBMS_OUTPUT.PUT_LINE('No items found with the original basket ID.');
   ELSE
-    -- Update basket ID for items
+ -- Update basket ID for items
     UPDATE bb_basketitem
-    SET idBasket = lv_new_num
-    WHERE idBasket = lv_old_num;
+    SET
+      idBasket = lv_new_num
+    WHERE
+      idBasket = lv_old_num;
   END IF;
 EXCEPTION
   WHEN NO_DATA_FOUND THEN
@@ -95,7 +104,3 @@ END;
 -- new annual salary.
 -- • Finally, following the details for each employee, show the total cost of all
 -- employees’ salary increases for Brewbean’s.
-SELECT
-  COUNT(*)
-FROM
-  bb_shopper
