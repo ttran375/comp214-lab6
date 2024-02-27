@@ -117,7 +117,7 @@ SELECT
   s.promo,
   SUM(bi.quantity*bi.price) total
 FROM
-  bb_shoppers
+  bb_shopper    s
   INNER JOIN bb_basket b
   USING (idShopper)
   INNER JOIN bb_basketitem bi
