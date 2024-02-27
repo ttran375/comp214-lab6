@@ -4,70 +4,53 @@
 -- D or S. The D represents details and indicates that each payment on all pledges the donor has
 -- made should be displayed. The S indicates displaying summary data of the pledge payment
 -- total for each pledge the donor has made.
+
+SET SERVEROUTPUT ON;
+
 DECLARE
-  lv_donor_id       DD_Donor.idDonor%TYPE;
-  lv_indicator      VARCHAR2(1);
- -- Define cursor variable
-  TYPE payment_cursor_type IS
-    REF CURSOR;
-  lv_payment_cursor payment_cursor_type;
- -- Declare variables to store query results
-  lv_payment_id     DD_Payment.idPay%TYPE;
-  lv_payment_amt    DD_Payment.Payamt%TYPE;
-  lv_payment_date   DD_Payment.Paydate%TYPE;
+    v_donor_id dd_donor.idDonor%TYPE;
+    v_indicator CHAR(1) := 'D'; -- Default value for indicator
+    v_cursor SYS_REFCURSOR;
+    v_payment_amount dd_payment.Payamt%TYPE;
+    v_payment_date dd_payment.Paydate%TYPE;
+    v_pledge_id dd_pledge.idPledge%TYPE;
 BEGIN
- -- Get user input for donor ID and indicator
-  lv_donor_id := &donor_id; -- Replace &donor_id with the actual variable to get donor ID from user
-  lv_indicator := UPPER('&indicator'); -- Replace &indicator with the actual variable to get indicator from user
- -- Open cursor based on user input
-  IF lv_indicator = 'D' THEN
-    OPEN lv_payment_cursor FOR
-      SELECT
-        p.idPay,
-        p.Payamt,
-        p.Paydate
-      FROM
-        DD_Payment p
-        JOIN DD_Pledge pl
-        ON p.idPledge = pl.idPledge
-      WHERE
-        pl.idDonor = lv_donor_id;
-  ELSIF lv_indicator = 'S' THEN
-    OPEN lv_payment_cursor FOR
-      SELECT
-        pl.idPledge,
-        SUM(p.Payamt) AS total_payment
-      FROM
-        DD_Payment p
-        JOIN DD_Pledge pl
-        ON p.idPledge = pl.idPledge
-      WHERE
-        pl.idDonor = lv_donor_id
-      GROUP BY
-        pl.idPledge;
-  ELSE
-    DBMS_OUTPUT.PUT_LINE('Invalid indicator. Please enter D or S.');
-    RETURN;
-  END IF;
- -- Fetch and display results
-  LOOP
-    FETCH lv_payment_cursor INTO lv_payment_id, lv_payment_amt, lv_payment_date;
-    EXIT WHEN lv_payment_cursor%NOTFOUND;
-    IF lv_indicator = 'D' THEN
-      DBMS_OUTPUT.PUT_LINE('Payment ID: '
-                           || lv_payment_id
-                           || ', Amount: '
-                           || lv_payment_amt
-                           || ', Date: '
-                           || lv_payment_date);
-    ELSIF lv_indicator = 'S' THEN
-      DBMS_OUTPUT.PUT_LINE('Pledge ID: '
-                           || lv_payment_id
-                           || ', Total Payment: '
-                           || lv_payment_amt);
+    -- Accept user input with default value
+    v_donor_id := NVL(&enter_donor_id, v_donor_id);
+    v_indicator := UPPER(NVL('&enter_indicator', v_indicator));
+
+    -- Open cursor
+    IF v_indicator = 'D' THEN
+        OPEN v_cursor FOR
+            SELECT p.idPledge, py.Payamt, py.Paydate
+            FROM dd_pledge p
+            JOIN dd_payment py ON p.idPledge = py.idPledge
+            WHERE p.idDonor = v_donor_id;
+    ELSIF v_indicator = 'S' THEN
+        OPEN v_cursor FOR
+            SELECT p.idPledge, SUM(py.Payamt)
+            FROM dd_pledge p
+            JOIN dd_payment py ON p.idPledge = py.idPledge
+            WHERE p.idDonor = v_donor_id
+            GROUP BY p.idPledge;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Invalid indicator. Please enter D or S.');
+        RETURN;
     END IF;
-  END LOOP;
- -- Close cursor
-  CLOSE lv_payment_cursor;
+
+    -- Fetch and display data
+    LOOP
+        FETCH v_cursor INTO v_pledge_id, v_payment_amount, v_payment_date;
+        EXIT WHEN v_cursor%NOTFOUND;
+
+        IF v_indicator = 'D' THEN
+            DBMS_OUTPUT.PUT_LINE('Pledge ID: ' || v_pledge_id || ', Payment Amount: ' || v_payment_amount || ', Payment Date: ' || v_payment_date);
+        ELSIF v_indicator = 'S' THEN
+            DBMS_OUTPUT.PUT_LINE('Pledge ID: ' || v_pledge_id || ', Total Payment Amount: ' || v_payment_amount);
+        END IF;
+    END LOOP;
+
+    -- Close cursor
+    CLOSE v_cursor;
 END;
 /

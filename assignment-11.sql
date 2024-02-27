@@ -12,35 +12,36 @@
 -- B 500
 
 DECLARE
- -- Variables to hold input data
-  v_donor_type    dd_donor.typecode%TYPE;
-  v_pledge_amount dd_pledge.pledgeamt%TYPE;
- -- Cursor declaration
-  CURSOR c_pledges IS
-  SELECT
-    d.Firstname
-    || ' '
-    || d.Lastname AS donor_name,
-    p.Pledgeamt
-  FROM
-    dd_donor  d
-    JOIN dd_pledge p
-    ON d.idDonor = p.idDonor
-  WHERE
-    d.Typecode = v_donor_type
-    AND p.Pledgeamt > v_pledge_amount;
+  lv_donor_type    CHAR(1);
+  lv_pledge_amount NUMBER(8, 2);
 BEGIN
- -- Input data
-  v_donor_type := 'I'; -- Individual
-  v_pledge_amount := 250;
- -- Output header
-  DBMS_OUTPUT.PUT_LINE('Donor Name | Pledge Amount');
-  DBMS_OUTPUT.PUT_LINE('---------------------------');
- -- Cursor loop
-  FOR pledge_rec IN c_pledges LOOP
-    DBMS_OUTPUT.PUT_LINE(pledge_rec.donor_name
-                         || ' | '
+ -- Declare variables to store donor type and pledge amount
+  lv_donor_type := 'I';
+  lv_pledge_amount := 250;
+ -- Iterate over pledges meeting specified criteria
+  FOR pledge_rec IN (
+ -- Select donor name, pledge date, and pledge amount for donors meeting criteria
+    SELECT
+      d.Firstname
+      || ' '
+      || d.Lastname AS donor_name,
+      p.Pledgedate,
+      p.Pledgeamt
+    FROM
+      DD_Donor  d
+      JOIN DD_Pledge p
+      ON d.idDonor = p.idDonor
+    WHERE
+      d.Typecode = lv_donor_type
+      AND p.Pledgeamt > lv_pledge_amount
+  ) LOOP
+ -- Output donor name, pledge date, and pledge amount for each qualifying pledge
+    DBMS_OUTPUT.PUT_LINE('Donor Name: '
+                         || pledge_rec.donor_name);
+    DBMS_OUTPUT.PUT_LINE('Pledge Date: '
+                         || pledge_rec.Pledgedate);
+    DBMS_OUTPUT.PUT_LINE('Pledge Amount: '
                          || pledge_rec.Pledgeamt);
+    DBMS_OUTPUT.PUT_LINE('--------------------------');
   END LOOP;
 END;
-/
