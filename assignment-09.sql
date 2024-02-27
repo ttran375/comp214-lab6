@@ -6,62 +6,60 @@
 -- output row.
 
 DECLARE
- -- Declare variables to store donor information, pledge details, and payment details
-  lv_donor_id       NUMBER := 303;
-  lv_pledge_id      dd_pledge.idPledge%TYPE;
-  lv_pledge_amt     dd_pledge.Pledgeamt%TYPE;
-  lv_pay_months     dd_pledge.paymonths%TYPE;
-  lv_payment_date   dd_payment.Paydate%TYPE;
-  lv_payment_amount dd_payment.Payamt%TYPE;
-  lv_first_payment  VARCHAR2(20);
-  lv_counter        NUMBER := 0;
- -- Cursor to select pledge and payment details for the specified donor
-  CURSOR pledge_cursor IS
+ -- Variables to store pledge and payment information
+  lv_pledge_id     dd_pledge.idPledge%TYPE;
+  lv_pledge_amt    dd_pledge.Pledgeamt%TYPE;
+  lv_paymonths     dd_pledge.paymonths%TYPE;
+  lv_payment_id    dd_payment.idPay%TYPE;
+  lv_payment_date  dd_payment.Paydate%TYPE;
+  lv_payment_amt   dd_payment.Payamt%TYPE;
+  lv_first_payment VARCHAR2(20);
+ -- Cursor declaration
+  CURSOR c_pledges IS
   SELECT
     p.idPledge,
     p.Pledgeamt,
     p.paymonths,
-    py.Paydate,
-    py.Payamt
+    pay.idPay,
+    pay.Paydate,
+    pay.Payamt
   FROM
     dd_pledge  p
-    JOIN dd_payment py
-    ON p.idPledge = py.idPledge
+    LEFT JOIN dd_payment pay
+    ON p.idPledge = pay.idPledge
   WHERE
-    p.idDonor = lv_donor_id
+    p.idDonor = 301 -- Change this to the specific donor ID you want to retrieve information for
   ORDER BY
     p.idPledge,
-    py.Paydate;
+    pay.Paydate;
 BEGIN
- -- Loop through each pledge and its corresponding payments
-  FOR pledge_rec IN pledge_cursor LOOP
- -- Increment the counter for each pledge
-    lv_counter := lv_counter + 1;
- -- Assign pledge details to variables
-    lv_pledge_id := pledge_rec.idPledge;
-    lv_pledge_amt := pledge_rec.Pledgeamt;
-    lv_pay_months := pledge_rec.paymonths;
- -- Assign payment details to variables
-    lv_payment_date := pledge_rec.Paydate;
-    lv_payment_amount := pledge_rec.Payamt;
- -- Determine if it's the first payment for the pledge
-    IF lv_counter = 1 THEN
-      lv_first_payment := 'first payment';
+ -- Open cursor
+  OPEN c_pledges;
+ -- Fetching data from cursor
+  LOOP
+    FETCH c_pledges INTO lv_pledge_id, lv_pledge_amt, lv_paymonths, lv_payment_id, lv_payment_date, lv_payment_amt;
+    EXIT WHEN c_pledges%NOTFOUND;
+ -- Checking if it's the first payment
+    IF lv_payment_id IS NULL THEN
+      lv_first_payment := 'First payment';
     ELSE
-      lv_first_payment := NULL;
+      lv_first_payment := '';
     END IF;
- -- Output pledge and payment details along with whether it's the first payment
+ -- Displaying pledge and payment information
     DBMS_OUTPUT.PUT_LINE('Pledge ID: '
                          || lv_pledge_id
                          || ', Pledge Amount: '
                          || lv_pledge_amt
-                         || ', Pay Months: '
-                         || lv_pay_months
+                         || ', Number of Monthly Payments: '
+                         || lv_paymonths
                          || ', Payment Date: '
                          || lv_payment_date
                          || ', Payment Amount: '
-                         || lv_payment_amount
-                         || ', '
+                         || lv_payment_amt
+                         || ' '
                          || lv_first_payment);
   END LOOP;
+ -- Close cursor
+  CLOSE c_pledges;
 END;
+/
