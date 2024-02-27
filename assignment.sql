@@ -135,37 +135,58 @@ ORDER BY
 -- the anonymous block at the end). Modify the anonymous block so that it displays the number of
 -- rows updated onscreen. Run the block.
 UPDATE bb_shopper
-  SET promo = NULL;
+SET
+  promo = NULL;
+
 UPDATE bb_shopper
-  SET promo = 'B'
-  WHERE idShopper IN (21,23,25);
+SET
+  promo = 'B'
+WHERE
+  idShopper IN (21, 23, 25);
+
 UPDATE bb_shopper
-  SET promo = 'A'
-  WHERE idShopper = 22;
+SET
+  promo = 'A'
+WHERE
+  idShopper = 22;
+
 COMMIT;
+
 /
 
 BEGIN
- UPDATE bb_shopper
-  SET promo = NULL
-  WHERE promo IS NOT NULL;
+  UPDATE bb_shopper
+  SET
+    promo = NULL
+  WHERE
+    promo IS NOT NULL;
 END;
 /
 
 DECLARE
   lv_rows_updated NUMBER;
 BEGIN
-  -- Update the PROMO column and capture the number of rows updated
+ -- Update the PROMO column and capture the number of rows updated
   UPDATE bb_shopper
-  SET promo = NULL
-  WHERE promo IS NOT NULL;
-
-  -- Get the number of rows updated
+  SET
+    promo = NULL
+  WHERE
+    promo IS NOT NULL;
+ -- Get the number of rows updated
   lv_rows_updated := SQL%ROWCOUNT;
-
-  -- Display the number of rows updated
-  DBMS_OUTPUT.PUT_LINE('Number of rows updated: ' || lv_rows_updated);
+ -- Display the number of rows updated
+  DBMS_OUTPUT.PUT_LINE('Number of rows updated: '
+                       || lv_rows_updated);
 END;
+
+-- There are indeed no rows where promo is not NULL, and thus, the update 
+-- statement will not affect any rows
+SELECT
+  COUNT(*)
+FROM
+  bb_shopper
+WHERE
+  promo IS NOT NULL;
 
 -- Assignment 4-4: Using Exception Handling
 -- In this assignment, you test a block containing a CASE statement for errors, and then add an
