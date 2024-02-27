@@ -49,7 +49,6 @@ BEGIN
   END IF;
 END;
 
-
 -- Assignment 4-2: Using a CURSOR FOR Loop
 -- Brewbean’s wants to send a promotion via e-mail to shoppers. A shopper who has purchased
 -- more than $50 at the site receives a $5 coupon for his or her next purchase over $25. A
@@ -144,11 +143,28 @@ UPDATE bb_shopper
   SET promo = 'A'
   WHERE idShopper = 22;
 COMMIT;
+/
 
 BEGIN
  UPDATE bb_shopper
   SET promo = NULL
   WHERE promo IS NOT NULL;
+END;
+/
+
+DECLARE
+  lv_rows_updated NUMBER;
+BEGIN
+  -- Update the PROMO column and capture the number of rows updated
+  UPDATE bb_shopper
+  SET promo = NULL
+  WHERE promo IS NOT NULL;
+
+  -- Get the number of rows updated
+  lv_rows_updated := SQL%ROWCOUNT;
+
+  -- Display the number of rows updated
+  DBMS_OUTPUT.PUT_LINE('Number of rows updated: ' || lv_rows_updated);
 END;
 
 -- Assignment 4-4: Using Exception Handling
