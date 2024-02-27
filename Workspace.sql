@@ -1,48 +1,37 @@
-DECLARE
-  ex_prod_update EXCEPTION;
-BEGIN
-  UPDATE bb_product
-  SET
-    description = 'Mill grinder with 5 grind settings!'
-  WHERE
-    idProduct = 30;
-  IF SQL%NOTFOUND THEN
-    RAISE ex_prod_update;
-  END IF;
-EXCEPTION
-  WHEN ex_prod_update THEN
-    DBMS_OUTPUT.PUT_LINE('Invalid product ID entered');
-END;
-/
+-- Add the STK_FLAG column to the MM_MOVIE table
+ALTER TABLE mm_movie ADD STK_FLAG VARCHAR(1);
 
+-- Create an anonymous PL/SQL block to update the STK_FLAG column
 DECLARE
-  TYPE type_basket IS RECORD (
-    basket bb_basket.idBasket%TYPE,
-    created bb_basket.dtcreated%TYPE,
-    qty bb_basket.quantity%TYPE,
-    sub bb_basket.subtotal%TYPE
-  );
-  rec_basket     type_basket;
-  lv_days_num    NUMBER(3);
-  lv_shopper_num NUMBER(3) := 26;
+  v_movie_id    mm_movie.movie_id%TYPE;
+  v_movie_value mm_movie.movie_value%TYPE;
 BEGIN
-  SELECT
-    idBasket,
-    dtcreated,
-    quantity,
-    subtotal INTO rec_basket
-  FROM
-    bb_basket
-  WHERE
-    idShopper = lv_shopper_num
-    AND orderplaced = 0;
-  lv_days_num := SYSDATE - rec_basket.created;
-EXCEPTION
-  WHEN NO_DATA_FOUND THEN
-    DBMS_OUTPUT.PUT_LINE('You have no saved baskets!');
-  WHEN OTHERS THEN
-    DBMS_OUTPUT.PUT_LINE('A problem has occurred.');
-    DBMS_OUTPUT.PUT_LINE('Tech Support will be notified and
-will contact you via e-mail.');
+ -- Cursor to fetch movie_id and movie_value
+  FOR movie_rec IN (
+    SELECT
+      movie_id,
+      movie_value
+    FROM
+      mm_movie
+  ) LOOP
+    v_movie_id := movie_rec.movie_id;
+    v_movie_value := movie_rec.movie_value;
+ -- Update STK_FLAG based on the condition
+    IF v_movie_value >= 75 THEN
+      UPDATE mm_movie
+      SET
+        STK_FLAG = '*'
+      WHERE
+        movie_id = v_movie_id;
+    ELSE
+      UPDATE mm_movie
+      SET
+        STK_FLAG = NULL
+      WHERE
+        movie_id = v_movie_id;
+    END IF;
+  END LOOP;
+
+  COMMIT; -- Commit the changes
 END;
 /
