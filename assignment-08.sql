@@ -12,10 +12,14 @@
 -- new annual salary.
 -- • Finally, following the details for each employee, show the total cost of all
 -- employees’ salary increases for Brewbean’s.
+
 DECLARE
+  -- Declare constants for annual raise limit and raise percentage
   lv_annual_raise_limit    CONSTANT NUMBER := 2000;
   lv_raise_percentage      CONSTANT NUMBER := 0.06;
+  -- Variable to store total salary increase
   lv_total_salary_increase NUMBER := 0;
+  -- Cursor to select employee data
   CURSOR c_employee IS
   SELECT
     EMPNO,
@@ -26,20 +30,24 @@ DECLARE
   WHERE
     JOB != 'PRESIDENT';
 BEGIN
+  -- Loop through each employee record fetched by the cursor
   FOR emp_rec IN c_employee LOOP
- -- Calculate raise amount
+    -- Declare variables for raise amount and proposed salary
     DECLARE
       lv_raise_amount    NUMBER;
       lv_proposed_salary NUMBER;
     BEGIN
+      -- Calculate raise amount based on raise percentage
       lv_raise_amount := emp_rec.SAL * lv_raise_percentage;
- -- Cap raise amount if it exceeds the limit
+      -- Check if raise amount exceeds the annual raise limit
       IF lv_raise_amount > lv_annual_raise_limit THEN
         lv_raise_amount := lv_annual_raise_limit;
       END IF;
 
+      -- Calculate proposed new salary after raise
       lv_proposed_salary := emp_rec.SAL + lv_raise_amount;
- -- Output current annual salary, raise, and proposed new annual salary
+      
+      -- Output information about employee's current salary, raise, and proposed new salary
       DBMS_OUTPUT.PUT_LINE('Employee '
                            || emp_rec.EMPNO
                            || ': '
@@ -51,17 +59,19 @@ BEGIN
                            || ', '
                            || 'Proposed New Salary: $'
                            || lv_proposed_salary);
- -- Update employee salary
+
+      -- Update employee's salary in the EMPLOYEE table
       UPDATE EMPLOYEE
       SET
         SAL = lv_proposed_salary
       WHERE
         EMPNO = emp_rec.EMPNO;
- -- Accumulate total salary increase
+
+      -- Add raise amount to total salary increase
       lv_total_salary_increase := lv_total_salary_increase + lv_raise_amount;
     END;
   END LOOP;
- -- Output total cost of salary increases
+  -- Output total cost of salary increases
   DBMS_OUTPUT.PUT_LINE('Total Cost of Salary Increases: $'
                        || lv_total_salary_increase);
 END;

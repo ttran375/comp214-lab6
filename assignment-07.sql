@@ -13,21 +13,13 @@
 -- named lv_new_num with a value of 4 to provide values to the block. First, verify that no item
 -- rows with the basket ID 30 exist in the BB_BASKETITEM table.
 
--- Declare a block
 DECLARE
-  -- Declare a variable to hold the old basket ID and initialize it to 30
+  -- Declare variables to store the original and new basket IDs, and a count of basket items
   lv_old_num NUMBER := 30;
-  
-  -- Declare a variable to hold the new basket ID and initialize it to 4
   lv_new_num NUMBER := 4;
-  
-  -- Declare a variable to hold the count of items with the old basket ID
   lv_count NUMBER;
-
--- Begin the execution block
 BEGIN
-  -- Select the count of items from the 'bb_basketitem' table where 'idBasket' equals the value of 'lv_old_num'
-  -- Store the result in 'lv_count'
+  -- Count the number of items in the bb_basketitem table with the original basket ID
   SELECT
     COUNT(*) INTO lv_count
   FROM
@@ -35,27 +27,21 @@ BEGIN
   WHERE
     idBasket = lv_old_num;
     
-  -- If no items were found with the old basket ID
+  -- Check if no items are found with the original basket ID
   IF lv_count = 0 THEN
-    -- Output a message indicating that no items were found
+    -- Output a message indicating no items were found with the original basket ID
     DBMS_OUTPUT.PUT_LINE('No items found with the original basket ID.');
-  -- If items were found with the old basket ID
   ELSE
-    -- Update the 'idBasket' column of items in the 'bb_basketitem' table where 'idBasket' equals the value of 'lv_old_num'
-    -- Set 'idBasket' to the value of 'lv_new_num'
+    -- If items are found with the original basket ID, update the basket ID to the new value
     UPDATE bb_basketitem
     SET
       idBasket = lv_new_num
     WHERE
       idBasket = lv_old_num;
-  -- End the IF statement
   END IF;
-  
--- Handle exceptions
 EXCEPTION
-  -- If no data was found (i.e., there is no basket with the ID stored in 'lv_old_num'), then handle the exception
+  -- Exception handling block to catch NO_DATA_FOUND exception
   WHEN NO_DATA_FOUND THEN
-    -- Output a message indicating that the original basket ID is invalid
+    -- Output a message indicating an invalid original basket ID
     DBMS_OUTPUT.PUT_LINE('Invalid original basket ID');
--- End the execution block
 END;
