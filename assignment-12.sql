@@ -5,6 +5,12 @@
 -- made should be displayed. The S indicates displaying summary data of the pledge payment
 -- total for each pledge the donor has made.
 
+SET SERVEROUTPUT ON
+
+ACCEPT enter_donor_id PROMPT 'Enter donor ID [Default: 301]: ' DEFAULT 301
+
+ACCEPT enter_indicator PROMPT 'Enter indicator (D or S) [Default: D]: ' DEFAULT 'D'
+
 DECLARE
   v_donor_id       dd_donor.idDonor%TYPE;
   v_indicator      CHAR(1);
@@ -14,8 +20,13 @@ DECLARE
   v_pledge_id      dd_pledge.idPledge%TYPE;
 BEGIN
  -- Accept user input
-  v_donor_id := &enter_donor_id;
+  v_donor_id := '&enter_donor_id';
   v_indicator := UPPER('&enter_indicator');
+ -- Check if the indicator is valid
+  IF v_indicator NOT IN ('D', 'S') THEN
+    DBMS_OUTPUT.PUT_LINE('Invalid indicator. Please enter D or S.');
+    RETURN;
+  END IF;
  -- Open cursor
   IF v_indicator = 'D' THEN
     OPEN v_cursor FOR
@@ -42,9 +53,6 @@ BEGIN
         p.idDonor = v_donor_id
       GROUP BY
         p.idPledge;
-  ELSE
-    DBMS_OUTPUT.PUT_LINE('Invalid indicator. Please enter D or S.');
-    RETURN;
   END IF;
  -- Fetch and display data
   LOOP
