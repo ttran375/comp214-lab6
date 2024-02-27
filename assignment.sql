@@ -5,6 +5,14 @@
 -- needs to be added to the block that displays the message “Invalid shopper ID” onscreen. Use
 -- an initialized variable named lv_shopper_num to provide a shopper ID. Test the block with the
 -- shopper ID 99.
+DECLARE
+ rec_shopper bb_shopper%ROWTYPE;
+BEGIN
+ SELECT *
+  INTO rec_shopper
+  FROM bb_shopper
+  WHERE idShopper = ??;
+END;
 
 -- Assignment 4-6: Handling Exceptions with Undefined Errors
 -- Brewbean’s wants to add a check constraint on the QUANTITY column of the
