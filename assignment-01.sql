@@ -10,7 +10,6 @@
 -- section. The cursor must be manipulated with explicit actions of OPEN, FETCH, and CLOSE.
 -- A variable named lv_flag_txt is used to store the status of the stock check. The results
 -- should look like Figure 4-33.
-
 -- Declare a block
 DECLARE
  -- Declare a cursor to select basket items and their corresponding stock
