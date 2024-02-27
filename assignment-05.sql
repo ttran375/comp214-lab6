@@ -6,30 +6,26 @@
 -- an initialized variable named lv_shopper_num to provide a shopper ID. Test the block with the
 -- shopper ID 99.
 
--- Declare a block
 DECLARE
-  -- Declare a record variable of type 'bb_shopper'
+  -- Declare a record variable to store data from the bb_shopper table
   rec_shopper    bb_shopper%ROWTYPE;
-  
-  -- Declare a variable to hold the shopper ID and initialize it to 99
+  -- Declare a variable to store the shopper ID, initialized to 99
   lv_shopper_num bb_shopper.idShopper%TYPE := 99;
 
--- Begin the execution block
 BEGIN
-  -- Begin an inner block
+  -- Attempt to select a record from the bb_shopper table where the idShopper matches lv_shopper_num
   SELECT
       * INTO rec_shopper
     FROM
       bb_shopper
     WHERE
       idShopper = lv_shopper_num;
-      
-  -- Handle exceptions
+
+  -- Exception handling block
   EXCEPTION
-    -- If no data was found (i.e., there is no shopper with the ID stored in 'lv_shopper_num'), then handle the exception
+    -- If no data is found for the specified shopper ID, handle the NO_DATA_FOUND exception
     WHEN NO_DATA_FOUND THEN
       -- Output a message indicating that the shopper ID is invalid
       DBMS_OUTPUT.PUT_LINE('Invalid shopper ID');
-  
--- End the execution block
+
 END;
