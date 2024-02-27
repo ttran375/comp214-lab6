@@ -16,10 +16,7 @@ DECLARE
 -- Begin the execution block
 BEGIN
   -- Begin an inner block
-  BEGIN
-    -- Select all columns from the 'bb_shopper' table where 'idShopper' equals the value of 'lv_shopper_num'
-    -- Store the result in the 'rec_shopper' record
-    SELECT
+  SELECT
       * INTO rec_shopper
     FROM
       bb_shopper
@@ -32,7 +29,6 @@ BEGIN
     WHEN NO_DATA_FOUND THEN
       -- Output a message indicating that the shopper ID is invalid
       DBMS_OUTPUT.PUT_LINE('Invalid shopper ID');
-  -- End the inner block
-  END;
+  
 -- End the execution block
 END;
