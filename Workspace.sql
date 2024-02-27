@@ -13,9 +13,9 @@
 -- • Finally, following the details for each employee, show the total cost of all
 -- employees’ salary increases for Brewbean’s.
 DECLARE
-  v_annual_raise_limit    CONSTANT NUMBER := 2000;
-  v_raise_percentage      CONSTANT NUMBER := 0.06;
-  v_total_salary_increase NUMBER := 0;
+  lv_annual_raise_limit    CONSTANT NUMBER := 2000;
+  lv_raise_percentage      CONSTANT NUMBER := 0.06;
+  lv_total_salary_increase NUMBER := 0;
   CURSOR c_employee IS
   SELECT
     EMPNO,
@@ -29,16 +29,16 @@ BEGIN
   FOR emp_rec IN c_employee LOOP
  -- Calculate raise amount
     DECLARE
-      v_raise_amount    NUMBER;
-      v_proposed_salary NUMBER;
+      lv_raise_amount    NUMBER;
+      lv_proposed_salary NUMBER;
     BEGIN
-      v_raise_amount := emp_rec.SAL * v_raise_percentage;
+      lv_raise_amount := emp_rec.SAL * lv_raise_percentage;
  -- Cap raise amount if it exceeds the limit
-      IF v_raise_amount > v_annual_raise_limit THEN
-        v_raise_amount := v_annual_raise_limit;
+      IF lv_raise_amount > lv_annual_raise_limit THEN
+        lv_raise_amount := lv_annual_raise_limit;
       END IF;
 
-      v_proposed_salary := emp_rec.SAL + v_raise_amount;
+      lv_proposed_salary := emp_rec.SAL + lv_raise_amount;
  -- Output current annual salary, raise, and proposed new annual salary
       DBMS_OUTPUT.PUT_LINE('Employee '
                            || emp_rec.EMPNO
@@ -47,22 +47,22 @@ BEGIN
                            || emp_rec.SAL
                            || ', '
                            || 'Raise: $'
-                           || v_raise_amount
+                           || lv_raise_amount
                            || ', '
                            || 'Proposed New Salary: $'
-                           || v_proposed_salary);
+                           || lv_proposed_salary);
  -- Update employee salary
       UPDATE EMPLOYEE
       SET
-        SAL = v_proposed_salary
+        SAL = lv_proposed_salary
       WHERE
         EMPNO = emp_rec.EMPNO;
  -- Accumulate total salary increase
-      v_total_salary_increase := v_total_salary_increase + v_raise_amount;
+      lv_total_salary_increase := lv_total_salary_increase + lv_raise_amount;
     END;
   END LOOP;
  -- Output total cost of salary increases
   DBMS_OUTPUT.PUT_LINE('Total Cost of Salary Increases: $'
-                       || v_total_salary_increase);
+                       || lv_total_salary_increase);
 END;
 /
