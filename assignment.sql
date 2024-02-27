@@ -44,3 +44,7 @@
 -- new annual salary.
 -- • Finally, following the details for each employee, show the total cost of all
 -- employees’ salary increases for Brewbean’s.
+SELECT
+  COUNT(*)
+FROM
+  bb_shopper
