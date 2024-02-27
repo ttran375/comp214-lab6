@@ -2,10 +2,10 @@
 -- Redo Assignment 4-9, but use a different cursor form to perform the same task.
 
 DECLARE
-  -- Variables to store pledge and payment information
+ -- Variables to store pledge and payment information
   lv_first_payment VARCHAR2(20);
 BEGIN
-  -- Cursor declaration using cursor FOR loop
+ -- Cursor declaration using cursor FOR loop
   FOR pledge_rec IN (
     SELECT
       p.idPledge,
@@ -23,15 +23,14 @@ BEGIN
     ORDER BY
       p.idPledge,
       pay.Paydate
-  )
-  LOOP
-    -- Checking if it's the first payment
+  ) LOOP
+ -- Checking if it's the first payment
     IF pledge_rec.idPay IS NULL THEN
       lv_first_payment := 'First payment';
     ELSE
       lv_first_payment := '';
     END IF;
-    -- Displaying pledge and payment information
+ -- Displaying pledge and payment information
     DBMS_OUTPUT.PUT_LINE('Pledge ID: '
                          || pledge_rec.idPledge
                          || ', Pledge Amount: '
