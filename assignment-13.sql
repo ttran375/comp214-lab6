@@ -8,35 +8,42 @@
 SET SERVEROUTPUT ON;
 
 DECLARE
-  lv_old_id dd_donor.idDonor%TYPE := 305; -- Old donor ID
-  lv_new_id dd_donor.idDonor%TYPE := 999; -- New donor ID
+  lv_old_id    dd_donor.idDonor%TYPE := 305; -- Old donor ID
+  lv_new_id    dd_donor.idDonor%TYPE := 999; -- New donor ID
   lv_row_count NUMBER;
 BEGIN
-  -- Check if the old ID exists
-  SELECT COUNT(*)
-  INTO lv_row_count
-  FROM dd_donor
-  WHERE idDonor = lv_old_id;
-
+ -- Check if the old ID exists
+  SELECT
+    COUNT(*) INTO lv_row_count
+  FROM
+    dd_donor
+  WHERE
+    idDonor = lv_old_id;
   IF lv_row_count = 0 THEN
-    DBMS_OUTPUT.PUT_LINE('No donor with ID ' || lv_old_id || ' found.');
+    DBMS_OUTPUT.PUT_LINE('No donor with ID '
+                         || lv_old_id
+                         || ' found.');
   ELSE
-    -- Attempt to change the donor ID
+ -- Attempt to change the donor ID
     UPDATE dd_donor
-    SET idDonor = lv_new_id
-    WHERE idDonor = lv_old_id;
-    
-    -- Check if any rows were affected by the update
+    SET
+      idDonor = lv_new_id
+    WHERE
+      idDonor = lv_old_id;
+ -- Check if any rows were affected by the update
     IF SQL%ROWCOUNT = 0 THEN
       DBMS_OUTPUT.PUT_LINE('This ID is already assigned.');
     ELSE
-      -- Display success message if the update was successful
-      DBMS_OUTPUT.PUT_LINE('Donor ID changed successfully from ' || lv_old_id || ' to ' || lv_new_id);
+ -- Display success message if the update was successful
+      DBMS_OUTPUT.PUT_LINE('Donor ID changed successfully from '
+                           || lv_old_id
+                           || ' to '
+                           || lv_new_id);
     END IF;
   END IF;
-  
 EXCEPTION
-  -- Handling other exceptions
+ -- Handling other exceptions
   WHEN OTHERS THEN
-    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+    DBMS_OUTPUT.PUT_LINE('An error occurred: '
+                         || SQLERRM);
 END;
