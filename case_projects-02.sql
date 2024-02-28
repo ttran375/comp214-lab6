@@ -9,6 +9,7 @@
 -- perform this task. The company plans to run this program monthly to update the STK_FLAG
 -- column before the inventory evaluation.
 -- Add the STK_FLAG column to the MM_MOVIE table
+
 ALTER TABLE mm_movie ADD STK_FLAG VARCHAR(1);
 
 -- Create an anonymous PL/SQL block to update the STK_FLAG column
