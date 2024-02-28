@@ -12,24 +12,24 @@ ACCEPT enter_donor_id PROMPT 'Enter donor ID [Default: 301]: ' DEFAULT 301
 ACCEPT enter_indicator PROMPT 'Enter indicator (D or S) [Default: D]: ' DEFAULT 'D'
 
 DECLARE
-  v_donor_id       dd_donor.idDonor%TYPE;
-  v_indicator      CHAR(1);
-  v_cursor         SYS_REFCURSOR;
-  v_payment_amount dd_payment.Payamt%TYPE;
-  v_payment_date   dd_payment.Paydate%TYPE;
-  v_pledge_id      dd_pledge.idPledge%TYPE;
+  lv_donor_id       dd_donor.idDonor%TYPE;
+  lv_indicator      CHAR(1);
+  lv_cursor         SYS_REFCURSOR;
+  lv_payment_amount dd_payment.Payamt%TYPE;
+  lv_payment_date   dd_payment.Paydate%TYPE;
+  lv_pledge_id      dd_pledge.idPledge%TYPE;
 BEGIN
  -- Accept user input
-  v_donor_id := '&enter_donor_id';
-  v_indicator := UPPER('&enter_indicator');
+  lv_donor_id := '&enter_donor_id';
+  lv_indicator := UPPER('&enter_indicator');
  -- Check if the indicator is valid
-  IF v_indicator NOT IN ('D', 'S') THEN
+  IF lv_indicator NOT IN ('D', 'S') THEN
     DBMS_OUTPUT.PUT_LINE('Invalid indicator. Please enter D or S.');
     RETURN;
   END IF;
  -- Open cursor
-  IF v_indicator = 'D' THEN
-    OPEN v_cursor FOR
+  IF lv_indicator = 'D' THEN
+    OPEN lv_cursor FOR
       SELECT
         p.idPledge,
         py.Payamt,
@@ -39,9 +39,9 @@ BEGIN
         JOIN dd_payment py
         ON p.idPledge = py.idPledge
       WHERE
-        p.idDonor = v_donor_id;
-  ELSIF v_indicator = 'S' THEN
-    OPEN v_cursor FOR
+        p.idDonor = lv_donor_id;
+  ELSIF lv_indicator = 'S' THEN
+    OPEN lv_cursor FOR
       SELECT
         p.idPledge,
         SUM(py.Payamt)
@@ -50,29 +50,29 @@ BEGIN
         JOIN dd_payment py
         ON p.idPledge = py.idPledge
       WHERE
-        p.idDonor = v_donor_id
+        p.idDonor = lv_donor_id
       GROUP BY
         p.idPledge;
   END IF;
  -- Fetch and display data
   LOOP
-    FETCH v_cursor INTO v_pledge_id, v_payment_amount, v_payment_date;
-    EXIT WHEN v_cursor%NOTFOUND;
-    IF v_indicator = 'D' THEN
+    FETCH lv_cursor INTO lv_pledge_id, lv_payment_amount, lv_payment_date;
+    EXIT WHEN lv_cursor%NOTFOUND;
+    IF lv_indicator = 'D' THEN
       DBMS_OUTPUT.PUT_LINE('Pledge ID: '
-                           || v_pledge_id
+                           || lv_pledge_id
                            || ', Payment Amount: '
-                           || v_payment_amount
+                           || lv_payment_amount
                            || ', Payment Date: '
-                           || v_payment_date);
-    ELSIF v_indicator = 'S' THEN
+                           || lv_payment_date);
+    ELSIF lv_indicator = 'S' THEN
       DBMS_OUTPUT.PUT_LINE('Pledge ID: '
-                           || v_pledge_id
+                           || lv_pledge_id
                            || ', Total Payment Amount: '
-                           || v_payment_amount);
+                           || lv_payment_amount);
     END IF;
   END LOOP;
  -- Close cursor
-  CLOSE v_cursor;
+  CLOSE lv_cursor;
 END;
 /
