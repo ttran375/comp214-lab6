@@ -4,38 +4,28 @@
 -- Include exception-handling code to address an error raised by attempting to enter a duplicate
 -- donor ID. If this error occurs, display the message “This ID is already assigned.” Test the code
 -- by changing donor ID 305. (Don’t include a COMMIT statement; roll back any DML actions used.)
+
+SET SERVEROUTPUT ON;
+
 DECLARE
-  lv_old_donor_id DD_Donor.idDonor%TYPE := 305; -- Old donor ID to change
-  lv_new_donor_id DD_Donor.idDonor%TYPE := 999; -- New donor ID
+  v_old_id dd_donor.idDonor%TYPE := 305; -- Old donor ID
+  v_new_id dd_donor.idDonor%TYPE := 999; -- New donor ID
 BEGIN
- -- Attempt to change donor ID
-  BEGIN
-    UPDATE DD_Donor
-    SET
-      idDonor = lv_new_donor_id
-    WHERE
-      idDonor = lv_old_donor_id;
-    DBMS_OUTPUT.PUT_LINE('Donor ID changed successfully.');
-  EXCEPTION
-    WHEN DUP_VAL_ON_INDEX THEN
-      DBMS_OUTPUT.PUT_LINE('This ID is already assigned.');
-  END;
- -- Display updated donor information
-  FOR donor_rec IN (
-    SELECT
-      *
-    FROM
-      DD_Donor
-    WHERE
-      idDonor = lv_new_donor_id
-  ) LOOP
-    DBMS_OUTPUT.PUT_LINE('New Donor ID: '
-                         || donor_rec.idDonor
-                         || ', Name: '
-                         || donor_rec.Firstname
-                         || ' '
-                         || donor_rec.Lastname);
-  END LOOP;
- -- Rollback any changes
-  ROLLBACK;
+  -- Attempt to change the donor ID
+  UPDATE dd_donor
+  SET idDonor = v_new_id
+  WHERE idDonor = v_old_id;
+  
+  -- Display success message if no exceptions are raised
+  DBMS_OUTPUT.PUT_LINE('Donor ID changed successfully from ' || v_old_id || ' to ' || v_new_id);
+  
+EXCEPTION
+  -- Handling duplicate donor ID exception
+  WHEN DUP_VAL_ON_INDEX THEN
+    DBMS_OUTPUT.PUT_LINE('This ID is already assigned.');
+  
+  -- Handling other exceptions
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
 END;
+/
