@@ -5,10 +5,7 @@
 -- made should be displayed. The S indicates displaying summary data of the pledge payment
 -- total for each pledge the donor has made.
 
-SET SERVEROUTPUT ON
-
 ACCEPT enter_donor_id PROMPT 'Enter donor ID [Default: 301]: ' DEFAULT 301
-
 ACCEPT enter_indicator PROMPT 'Enter indicator (D or S) [Default: D]: ' DEFAULT 'D'
 
 DECLARE
@@ -75,4 +72,3 @@ BEGIN
  -- Close cursor
   CLOSE lv_cursor;
 END;
-/
